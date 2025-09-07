@@ -1,0 +1,14 @@
+# Node / TypeScript
+node_modules/
+dist/
+*.log
+yarn-error.log
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Env
+.env
+.env.*
