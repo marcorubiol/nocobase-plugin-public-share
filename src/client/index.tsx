@@ -1,4 +1,7 @@
 export default class PublicShareClientPlugin {
+  static options = {
+    name: '@nocobase/plugin-public-share',
+  };
   afterAdd() {}
   async beforeLoad() {}
   async load() {
