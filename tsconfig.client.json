@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2019",
+    "outDir": "dist/client",
+    "rootDir": "src/client",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "emitDeclarationOnly": false
+  },
+  "include": ["src/client/**/*"]
+}
