@@ -16,7 +16,9 @@
     "build": "rimraf dist && tsc -p tsconfig.server.json && tsc -p tsconfig.client.json",
     "build:server": "tsc -p tsconfig.server.json",
     "build:client": "tsc -p tsconfig.client.json",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "dev": "tsc -p tsconfig.server.json --watch & tsc -p tsconfig.client.json --watch",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "peerDependencies": {
     "@nocobase/client": "1.x",
