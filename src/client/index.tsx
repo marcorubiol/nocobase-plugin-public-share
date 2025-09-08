@@ -22,3 +22,8 @@ PublicShareClientPlugin.prototype.afterDisable = async function () {};
 PublicShareClientPlugin.prototype.remove = async function () {};
 
 export default PublicShareClientPlugin;
+
+// Add options to the exports object too
+export const options = {
+  name: '@nocobase/plugin-public-share',
+};
