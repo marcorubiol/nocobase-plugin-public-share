@@ -9,5 +9,8 @@
     "jsx": "react-jsx",
     "emitDeclarationOnly": false
   },
-  "include": ["src/client/**/*"]
+  "include": [
+    "src/client/**/*",
+    "src/types/**/*"
+  ]
 }
