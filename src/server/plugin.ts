@@ -24,11 +24,11 @@ export default class PublicSharePlugin extends Plugin {
       const app: any = this.app as any;
       const router: any = app?.router || app?.koaRouter || app?.koa?.router;
       if (router && typeof router.get === 'function') {
-        router.get('/p/health', async (ctx: any) => {
+        router.get('/api/public/health', async (ctx: any) => {
           ctx.body = { ok: true, plugin: '@nocobase/plugin-public-share' };
         });
         // eslint-disable-next-line no-console
-        console.log('[PublicShare] Registered GET /p/health');
+        console.log('[PublicShare] Registered GET /api/public/health');
       }
 
       // Seed a demo password for a sample slug so you can test immediately
@@ -36,8 +36,8 @@ export default class PublicSharePlugin extends Plugin {
       this.pagePasswords.set('demo', 'demo');
 
       if (router) {
-        // GET /p/:slug — simple gate based on session cookie
-        router.get('/p/:slug', async (ctx: any) => {
+        // GET /api/public/:slug — simple gate based on session cookie
+        router.get('/api/public/:slug', async (ctx: any) => {
           const slug = ctx?.params?.slug as string;
           const sessionCookieName = this.cookieName(slug);
           const sessionId = ctx?.cookies?.get?.(sessionCookieName);
@@ -62,8 +62,8 @@ export default class PublicSharePlugin extends Plugin {
           ctx.body = { ok: true, authorized: true, slug };
         });
 
-        // POST /p/:slug/auth — check password and set session cookie
-        router.post('/p/:slug/auth', async (ctx: any) => {
+        // POST /api/public/:slug/auth — check password and set session cookie
+        router.post('/api/public/:slug/auth', async (ctx: any) => {
           const slug = ctx?.params?.slug as string;
           if (!slug || !this.pagePasswords.has(slug)) {
             ctx.status = 404;
@@ -107,7 +107,7 @@ export default class PublicSharePlugin extends Plugin {
         });
 
         // eslint-disable-next-line no-console
-        console.log('[PublicShare] Registered GET /p/:slug and POST /p/:slug/auth');
+        console.log('[PublicShare] Registered GET /api/public/:slug and POST /api/public/:slug/auth');
       }
     } catch (e) {
       // eslint-disable-next-line no-console
