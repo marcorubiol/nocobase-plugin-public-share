@@ -1,1 +1,19 @@
-export { default } from './plugin';
+function PublicShareClientPlugin(this: any, app: any) {
+  this.app = app;
+}
+
+PublicShareClientPlugin.prototype.afterAdd = function () {};
+
+PublicShareClientPlugin.prototype.beforeLoad = async function () {};
+
+PublicShareClientPlugin.prototype.load = async function () {
+  console.log('[PublicShare] Client plugin loaded successfully.');
+};
+
+PublicShareClientPlugin.prototype.afterEnable = async function () {};
+
+PublicShareClientPlugin.prototype.afterDisable = async function () {};
+
+PublicShareClientPlugin.prototype.remove = async function () {};
+
+export default PublicShareClientPlugin;
