@@ -4,12 +4,11 @@
  */
 
 import { InstallOptions, Plugin } from '@nocobase/server';
+import { PublicAuthMiddleware } from './middleware/publicAuth';
+import { publicShareACL } from './acl';
 
 export default class PublicSharePlugin extends Plugin {
-  // Database models will be available via this.db after load()
-  private authorizedSessions = new Set<string>(); // `${slug}:${sessionId}`
-  private attempts = new Map<string, { count: number; ts: number }>(); // `${ip}:${slug}`
-  private pagePasswords = new Map<string, string>(); // slug -> password (temporary)
+  private authMiddleware = new PublicAuthMiddleware();
 
   // NocoBase server will call load() on plugin initialization
   async load() {
@@ -26,8 +25,8 @@ export default class PublicSharePlugin extends Plugin {
       const app: any = this.app as any;
       const use = app?.use?.bind(app);
       if (typeof use === 'function') {
-        // Seed demo password for testing
-        this.pagePasswords.set('demo', 'demo');
+        // Setup ACL for public sharing
+        this.app.acl.define(publicShareACL);
 
         use(async (ctx: any, next: any) => {
           const path: string = ctx?.path || '';
@@ -42,64 +41,39 @@ export default class PublicSharePlugin extends Plugin {
             return;
           }
 
-          // Auth and protected slug
-          const mAuth = path.match(/^\/api\/public\/([^/]+)\/auth$/);
-          const mSlug = path.match(/^\/api\/public\/([^/]+)$/);
+          // Auth endpoint
+          if (ctx.method === 'POST' && path.match(/^\/api\/public\/([^\/]+)\/auth$/)) {
+            const slug = path.split('/')[3];
+            const body = ctx.request.body || {};
+            const password = body.password;
+            const ip = ctx.ip || 'unknown';
 
-          if (ctx.method === 'POST' && mAuth) {
-            const slug = mAuth[1];
-            if (!this.pagePasswords.has(slug)) {
-              ctx.status = 404;
-              ctx.body = { ok: false, error: 'Not found' };
-              return;
-            }
-
-            const ip = (ctx?.ip || ctx?.request?.ip || 'unknown') as string;
-            if (!this.checkRateLimit(ip, slug, 10, 5 * 60 * 1000)) {
+            if (!this.authMiddleware.checkRateLimit(ip, slug)) {
               ctx.status = 429;
-              ctx.body = { ok: false, error: 'Too many attempts, try later' };
+              ctx.body = { error: 'Too many attempts. Try again later.' };
               return;
             }
 
-            const body = ctx?.request?.body || {};
-            const password = (body?.password ?? '').toString();
-            const expected = this.pagePasswords.get(slug) as string;
-            const ok = password.length > 0 && password === expected;
-            if (!ok) {
-              ctx.status = 401;
-              ctx.body = { ok: false, authorized: false, message: 'Invalid password' };
-              return;
-            }
-
-            const sessionId = Math.random().toString(36).slice(2);
-            this.authorizedSessions.add(this.sessionKey(slug, sessionId));
-            const cookieName = this.cookieName(slug);
-            const maxAge = 30 * 60 * 1000; // 30 minutes
-            ctx?.cookies?.set?.(cookieName, sessionId, {
-              httpOnly: true,
-              sameSite: 'lax',
-              maxAge,
-              // secure: true, // enable when behind HTTPS
-              path: '/',
-            });
-            ctx.status = 200;
-            ctx.body = { ok: true, authorized: true };
-            return;
-          }
-
-          if (ctx.method === 'GET' && mSlug) {
-            const slug = mSlug[1];
-            if (!this.pagePasswords.has(slug)) {
+            if (!this.authMiddleware.getPagePassword(slug)) {
               ctx.status = 404;
-              ctx.body = { ok: false, error: 'Not found' };
+              ctx.body = { error: 'Page not found' };
               return;
             }
-            const sessionCookieName = this.cookieName(slug);
-            const sessionId = ctx?.cookies?.get?.(sessionCookieName);
-            const authorized = sessionId
-              ? this.authorizedSessions.has(this.sessionKey(slug, sessionId))
-              : false;
-            if (!authorized) {
+
+            if (this.authMiddleware.verifyPassword(slug, password)) {
+              const sessionId = ctx.session?.id || 'anonymous';
+              this.authMiddleware.authorize(sessionId, slug);
+              
+              // Set a cookie for this slug
+              ctx.cookies.set(`ps_${slug}`, 'authorized', {
+                httpOnly: true,
+                secure: false, // Set to true in production with HTTPS
+                maxAge: 24 * 60 * 60 * 1000, // 24 hours
+              });
+
+              ctx.status = 200;
+              ctx.body = { success: true, message: 'Authorized' };
+            } else {
               ctx.status = 401;
               ctx.body = { ok: false, authorized: false, message: 'Password required' };
               return;
@@ -145,18 +119,4 @@ export default class PublicSharePlugin extends Plugin {
     return `${slug}:${sessionId}`;
   }
 
-  private checkRateLimit(ip: string, slug: string, limit: number, windowMs: number) {
-    const key = `${ip}:${slug}`;
-    const now = Date.now();
-    const rec = this.attempts.get(key);
-    if (!rec || now - rec.ts > windowMs) {
-      this.attempts.set(key, { count: 1, ts: now });
-      return true;
-    }
-    if (rec.count >= limit) {
-      return false;
-    }
-    rec.count += 1;
-    return true;
-  }
 }
