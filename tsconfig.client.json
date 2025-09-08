@@ -1,11 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "AMD",
+    "module": "CommonJS",
     "target": "ES2019",
     "outDir": "dist/client",
     "rootDir": "src/client",
-    "moduleResolution": "Classic",
+    "moduleResolution": "Node",
     "jsx": "react-jsx",
     "emitDeclarationOnly": false
   },
