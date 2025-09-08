@@ -3,6 +3,15 @@
   "version": "1.8.23",
   "private": true,
   "main": "dist/server/index.js",
+  "displayName": "Public share",
+  "displayName.zh-CN": "页面公共分享",
+  "description": "Password-protected public sharing for custom pages (read-only, noindex by default).",
+  "homepage": "https://github.com/marcorubiol/nocobase-plugin-public-share",
+  "keywords": [
+    "Pages",
+    "Access control",
+    "Sharing"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist"
