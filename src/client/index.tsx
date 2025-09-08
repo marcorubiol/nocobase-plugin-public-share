@@ -2,6 +2,11 @@ function PublicShareClientPlugin(this: any, app: any) {
   this.app = app;
 }
 
+// Add static options for NocoBase PluginManager
+(PublicShareClientPlugin as any).options = {
+  name: '@nocobase/plugin-public-share',
+};
+
 PublicShareClientPlugin.prototype.afterAdd = function () {};
 
 PublicShareClientPlugin.prototype.beforeLoad = async function () {};
