@@ -1,14 +1,16 @@
-export default class PublicShareClientPlugin {
-  static options = {
+const PublicShareClientPlugin = {
+  options: {
     name: '@nocobase/plugin-public-share',
-  };
-  afterAdd() {}
-  async beforeLoad() {}
+  },
+  afterAdd() {},
+  async beforeLoad() {},
   async load() {
     // eslint-disable-next-line no-console
     console.log('[PublicShare] Client plugin registered');
-  }
-  async afterEnable() {}
-  async afterDisable() {}
-  async remove() {}
-}
+  },
+  async afterEnable() {},
+  async afterDisable() {},
+  async remove() {},
+};
+
+export default PublicShareClientPlugin;
