@@ -8,8 +8,13 @@ export default class PublicSharePlugin {
   public name = "@nocobase/plugin-public-share";
 
   // NocoBase server will call load() on plugin initialization
-  async load() {
-    // TODO: register routes: GET /p/:slug, POST /p/:slug/auth
+  async load(_ctx?: any) {
+    // Visible signal in server logs that the plugin has loaded
+    // (You should see this in the NocoBase server output)
+    // eslint-disable-next-line no-console
+    console.log("[PublicShare] Server plugin loaded");
+
+    // TODO (next step): register routes: GET /p/:slug, POST /p/:slug/auth
     // TODO: register PublicShare role and ACL read-only rules
     // TODO: add password auth and session cookie middleware
   }
