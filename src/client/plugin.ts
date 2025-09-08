@@ -1,24 +1,32 @@
 /**
- * Client plugin as a constructible function with static options and
- * prototype lifecycle methods, to align with NocoBase 1.8.23 loader
- * expectations (may call `new defaultExport()` and read `.options`).
+ * A self-contained client plugin class that is compatible with NocoBase's client loader.
+ * It is constructible (can be called with `new`) and has the static `options` property
+ * and lifecycle methods that the PluginManager expects.
+ * It does not extend any base class to avoid build-time module resolution errors.
  */
-function PublicShareClientPlugin(this: any) {
-  // no-op constructor
+export default class PublicShareClientPlugin {
+  static options = {
+    name: '@nocobase/plugin-public-share',
+  };
+
+  app: any;
+
+  constructor(app: any) {
+    this.app = app;
+  }
+
+  afterAdd() {}
+
+  async beforeLoad() {}
+
+  async load() {
+    // eslint-disable-next-line no-console
+    console.log('[PublicShare] Client plugin loaded successfully.');
+  }
+
+  async afterEnable() {}
+
+  async afterDisable() {}
+
+  async remove() {}
 }
-
-(PublicShareClientPlugin as any).options = {
-  name: '@nocobase/plugin-public-share',
-};
-
-PublicShareClientPlugin.prototype.afterAdd = function afterAdd() {};
-PublicShareClientPlugin.prototype.beforeLoad = async function beforeLoad() {};
-PublicShareClientPlugin.prototype.load = async function load() {
-  // eslint-disable-next-line no-console
-  console.log('[PublicShare] Client plugin registered');
-};
-PublicShareClientPlugin.prototype.afterEnable = async function afterEnable() {};
-PublicShareClientPlugin.prototype.afterDisable = async function afterDisable() {};
-PublicShareClientPlugin.prototype.remove = async function remove() {};
-
-export default PublicShareClientPlugin;
