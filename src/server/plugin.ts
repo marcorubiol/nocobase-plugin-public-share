@@ -6,10 +6,10 @@
 import { InstallOptions, Plugin } from '@nocobase/server';
 
 export default class PublicSharePlugin extends Plugin {
-  // In-memory demo stores (replace with DB-backed in real implementation)
-  private pagePasswords = new Map<string, string>(); // slug -> password (plain for demo)
+  // Database models will be available via this.db after load()
   private authorizedSessions = new Set<string>(); // `${slug}:${sessionId}`
   private attempts = new Map<string, { count: number; ts: number }>(); // `${ip}:${slug}`
+  private pagePasswords = new Map<string, string>(); // slug -> password (temporary)
 
   // NocoBase server will call load() on plugin initialization
   async load() {
@@ -18,13 +18,15 @@ export default class PublicSharePlugin extends Plugin {
     // eslint-disable-next-line no-console
     console.log("[PublicShare] Server plugin loaded");
 
+    // Skip collections for now - will implement DB persistence next
+
     // Attach a middleware directly to the Koa stack so we don't depend on
     // any specific router instance or mounting point.
     try {
       const app: any = this.app as any;
       const use = app?.use?.bind(app);
       if (typeof use === 'function') {
-        // Seed a demo password for a sample slug so you can test immediately
+        // Seed demo password for testing
         this.pagePasswords.set('demo', 'demo');
 
         use(async (ctx: any, next: any) => {
