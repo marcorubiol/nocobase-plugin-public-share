@@ -14,6 +14,23 @@ export default class PublicSharePlugin {
     // eslint-disable-next-line no-console
     console.log("[PublicShare] Server plugin loaded");
 
+    // Try to register a minimal health route for visibility/testing.
+    // We avoid importing NocoBase types; access router defensively.
+    try {
+      const app: any = (this as any).app || _ctx?.app || _ctx;
+      const router: any = app?.router || app?.koaRouter || app?.koa?.router;
+      if (router && typeof router.get === 'function') {
+        router.get('/p/health', async (ctx: any) => {
+          ctx.body = { ok: true, plugin: '@nocobase/plugin-public-share' };
+        });
+        // eslint-disable-next-line no-console
+        console.log('[PublicShare] Registered GET /p/health');
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('[PublicShare] Failed to register /p/health route (non-fatal):', e);
+    }
+
     // TODO (next step): register routes: GET /p/:slug, POST /p/:slug/auth
     // TODO: register PublicShare role and ACL read-only rules
     // TODO: add password auth and session cookie middleware
