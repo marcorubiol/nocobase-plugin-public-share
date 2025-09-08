@@ -1,11 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "AMD",
     "target": "ES2019",
     "outDir": "dist/client",
     "rootDir": "src/client",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "Classic",
     "jsx": "react-jsx",
     "emitDeclarationOnly": false
   },
