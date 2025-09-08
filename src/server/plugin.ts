@@ -3,7 +3,9 @@
  * Note: Minimal stub; will be wired to real routes and ACL next.
  */
 
-export default class PublicSharePlugin {
+import { InstallOptions, Plugin } from '@nocobase/server';
+
+export default class PublicSharePlugin extends Plugin {
   // Follow NocoBase convention: plugin package-style name
   public name = "@nocobase/plugin-public-share";
 
@@ -13,7 +15,7 @@ export default class PublicSharePlugin {
   private attempts = new Map<string, { count: number; ts: number }>(); // `${ip}:${slug}`
 
   // NocoBase server will call load() on plugin initialization
-  async load(_ctx?: any) {
+  async load() {
     // Visible signal in server logs that the plugin has loaded
     // (You should see this in the NocoBase server output)
     // eslint-disable-next-line no-console
@@ -22,7 +24,7 @@ export default class PublicSharePlugin {
     // Try to register a minimal health route for visibility/testing.
     // We avoid importing NocoBase types; access router defensively.
     try {
-      const app: any = (this as any).app || _ctx?.app || _ctx;
+      const app: any = this.app as any;
       const router: any = app?.router || app?.koaRouter || app?.koa?.router;
       if (router && typeof router.get === 'function') {
         router.get('/p/health', async (ctx: any) => {
@@ -117,6 +119,14 @@ export default class PublicSharePlugin {
 
     // TODO (next step): register PublicShare role and ACL read-only rules
   }
+
+  // Lifecycle stubs expected by PluginManager
+  afterAdd() {}
+  async beforeLoad() {}
+  async install(_options?: InstallOptions) {}
+  async afterEnable() {}
+  async afterDisable() {}
+  async remove() {}
 
   // Optional lifecycle hook
   async unload() {
