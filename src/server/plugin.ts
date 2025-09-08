@@ -6,9 +6,6 @@
 import { InstallOptions, Plugin } from '@nocobase/server';
 
 export default class PublicSharePlugin extends Plugin {
-  // Follow NocoBase convention: plugin package-style name
-  public name = "@nocobase/plugin-public-share";
-
   // In-memory demo stores (replace with DB-backed in real implementation)
   private pagePasswords = new Map<string, string>(); // slug -> password (plain for demo)
   private authorizedSessions = new Set<string>(); // `${slug}:${sessionId}`
