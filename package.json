@@ -1,17 +1,21 @@
 {
-  "name": "nocobase-plugin-public-share",
-  "version": "0.1.0",
+  "name": "@nocobase/plugin-public-share",
+  "version": "1.8.23",
   "private": true,
   "main": "dist/server/index.js",
-  "module": "dist/client/index.js",
-  "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist"
   },
+  "peerDependencies": {
+    "@nocobase/client": "1.x",
+    "@nocobase/database": "1.x",
+    "@nocobase/server": "1.x",
+    "@nocobase/test": "1.x",
+    "@nocobase/utils": "1.x"
+  },
   "devDependencies": {
     "typescript": "^5.4.0",
-    "rimraf": "^5.0.5",
-    "@types/node": "^20.12.7"
+    "rimraf": "^5.0.5"
   }
 }
