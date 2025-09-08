@@ -1,20 +1,24 @@
 /**
- * Client plugin class: constructible + static options for NocoBase 1.8.23.
- * Keep imports out to avoid build-time resolution issues; the runtime will only
- * need a constructible object with lifecycle hooks.
+ * Client plugin as a constructible function with static options and
+ * prototype lifecycle methods, to align with NocoBase 1.8.23 loader
+ * expectations (may call `new defaultExport()` and read `.options`).
  */
-export default class PublicShareClientPlugin {
-  static options = {
-    name: '@nocobase/plugin-public-share',
-  };
-
-  afterAdd() {}
-  async beforeLoad() {}
-  async load() {
-    // eslint-disable-next-line no-console
-    console.log('[PublicShare] Client plugin registered');
-  }
-  async afterEnable() {}
-  async afterDisable() {}
-  async remove() {}
+function PublicShareClientPlugin(this: any) {
+  // no-op constructor
 }
+
+(PublicShareClientPlugin as any).options = {
+  name: '@nocobase/plugin-public-share',
+};
+
+PublicShareClientPlugin.prototype.afterAdd = function afterAdd() {};
+PublicShareClientPlugin.prototype.beforeLoad = async function beforeLoad() {};
+PublicShareClientPlugin.prototype.load = async function load() {
+  // eslint-disable-next-line no-console
+  console.log('[PublicShare] Client plugin registered');
+};
+PublicShareClientPlugin.prototype.afterEnable = async function afterEnable() {};
+PublicShareClientPlugin.prototype.afterDisable = async function afterDisable() {};
+PublicShareClientPlugin.prototype.remove = async function remove() {};
+
+export default PublicShareClientPlugin;
